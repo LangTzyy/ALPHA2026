@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Panitia · Pesan &amp; Kesan OSPRO TI 2026</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <main id="login" class="wrap narrow center">
+    <p class="eyebrow">Khusus Panitia</p>
+    <h1>Masuk</h1>
+    <form id="login-form" class="paper">
+      <label for="pw" class="sr">Password</label>
+      <input id="pw" type="password" placeholder="Password panitia" autocomplete="current-password" required>
+      <button type="submit" class="btn" id="login-btn">Buka</button>
+      <p id="login-status" class="status" role="status" aria-live="polite"></p>
+    </form>
+  </main>
+
+  <main id="board" class="wrap" hidden>
+    <header class="bar">
+      <div>
+        <p class="eyebrow">Panitia OSPRO TI 2026</p>
+        <h1 class="h-sm">Pesan &amp; Kesan · <span id="count">0</span> masuk</h1>
+      </div>
+      <div class="actions">
+        <button class="btn ghost" id="refresh" type="button">Refresh</button>
+        <button class="btn ghost" id="logout" type="button">Keluar</button>
+      </div>
+    </header>
+    <p id="state" class="state" role="status"></p>
+    <section id="grid" class="grid"></section>
+  </main>
+
+  <div id="modal" class="overlay" hidden>
+    <article class="dialog letter" role="dialog" aria-modal="true" aria-labelledby="m-no">
+      <header class="letter-head">
+        <span id="m-no" class="no"></span>
+        <button id="m-close" class="x" type="button" aria-label="Tutup">×</button>
+      </header>
+      <p id="m-text" class="letter-text"></p>
+      <footer id="m-date" class="muted"></footer>
+    </article>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Pesan &amp; Kesan OSPRO TI 2026</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <main class="wrap narrow">
+    <p class="eyebrow">HIMAPRO TI SAKTI</p>
+    <h1>Pesan &amp; Kesan<br>OSPRO TI 2026</h1>
+    <p class="lead">Ceritakan pengalamanmu selama OSPRO: hal yang berkesan, yang kamu pelajari, atau pesan untuk panitia. Tidak perlu nama, tulisanmu sepenuhnya anonim.</p>
+
+    <form id="form" class="paper" novalidate>
+      <label for="msg" class="sr">Pesan dan kesan</label>
+      <textarea id="msg" rows="8" maxlength="1000" placeholder="Tulis pesan dan kesanmu di sini…"></textarea>
+      <input type="text" name="website" id="hp" tabindex="-1" autocomplete="off" aria-hidden="true" class="hp">
+      <div class="row">
+        <span id="counter" class="muted">0 / 1000</span>
+        <button type="submit" id="send" class="btn">Kirim</button>
+      </div>
+      <p id="status" class="status" role="status" aria-live="polite"></p>
+    </form>
+  </main>
+
+  <div id="success" class="overlay" hidden>
+    <div class="dialog center">
+      <svg class="check" viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="24"/><path d="M15 27l8 8 14-16"/></svg>
+      <h2>Terima kasih!</h2>
+      <p class="muted">Pesanmu sudah terkirim.</p>
+      <button type="button" id="ok" class="btn">Tutup</button>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/public.js"></script>
+</body>
+</html>
