@@ -146,3 +146,16 @@ input[type=password]:focus{border-color:var(--gold-d);box-shadow:0 0 0 3px rgba(
   .dialog{padding:24px 20px}
 }
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition-duration:.01ms!important}}
+
+/* ===== Tambahan: form dua kolom, modal pesan+kesan, status dibuka ===== */
+.field{display:block;font-weight:800;font-size:.95rem;margin:0 0 6px;color:var(--paper-ink)}
+.field.second{margin-top:20px}
+.count{display:block;text-align:right;margin:4px 0 0}
+.hp-wrap{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.letter-body{overflow-y:auto;margin-bottom:16px}
+.letter-body .letter-text{overflow:visible;margin:0 0 18px}
+.sec{margin:0 0 4px;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--paper-muted);font-weight:800}
+.card.done{border-color:#2b356b}
+.card.done .no,.card.done .muted{opacity:.55}
+.card.done .seal{opacity:.35}
+.card:disabled{cursor:wait}

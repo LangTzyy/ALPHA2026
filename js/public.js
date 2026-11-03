@@ -1,21 +1,28 @@
 (() => {
   const { API_URL, MAX_LEN, COOLDOWN_MS } = window.APP_CONFIG;
   const $ = (s) => document.querySelector(s);
-  const form = $('#form'), msg = $('#msg'), send = $('#send'), status = $('#status');
-  const counter = $('#counter'), success = $('#success');
+  const form = $('#form'), pesan = $('#pesan'), kesan = $('#kesan'), send = $('#send'), status = $('#status');
+  const cPesan = $('#count-pesan'), cKesan = $('#count-kesan'), success = $('#success');
 
   const setStatus = (t, err) => { status.textContent = t; status.classList.toggle('err', !!err); };
-
-  msg.addEventListener('input', () => {
-    counter.textContent = `${msg.value.length} / ${MAX_LEN}`;
-    if (msg.value.trim()) setStatus('');
+  const bindCounter = (el, out) => el.addEventListener('input', () => {
+    out.textContent = `${el.value.length} / ${MAX_LEN}`;
+    if (pesan.value.trim() && kesan.value.trim()) setStatus('');
   });
+  bindCounter(pesan, cPesan); bindCounter(kesan, cKesan);
+
+  const ERRORS = {
+    empty_pesan: 'Pesan tidak boleh kosong.',
+    empty_kesan: 'Kesan tidak boleh kosong.',
+    server_error: 'Server bermasalah. Coba lagi sebentar lagi.'
+  };
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const text = msg.value.trim();
-    if (!text) return setStatus('Pesan tidak boleh kosong.', true);
-    if (text.length > MAX_LEN) return setStatus(`Maksimal ${MAX_LEN} karakter.`, true);
+    const p = pesan.value.trim(), k = kesan.value.trim();
+    if (!p) return setStatus(ERRORS.empty_pesan, true);
+    if (!k) return setStatus(ERRORS.empty_kesan, true);
+    if (p.length > MAX_LEN || k.length > MAX_LEN) return setStatus(`Maksimal ${MAX_LEN} karakter per kolom.`, true);
 
     // Cooldown sederhana di sisi client untuk mengurangi spam tak sengaja
     const wait = COOLDOWN_MS - (Date.now() - Number(localStorage.getItem('ospro_last') || 0));
@@ -26,19 +33,20 @@
       const res = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // hindari CORS preflight
-        body: JSON.stringify({ action: 'submit', message: text, website: $('#hp').value })
+        body: JSON.stringify({ action: 'submit', pesan: p, kesan: k, hp: $('#hp').value })
       });
       const data = await res.json();
-      if (!data.ok) throw new Error(data.error);
+      if (!data.ok) throw new Error(data.error || 'unknown');
       localStorage.setItem('ospro_last', String(Date.now()));
-      form.reset(); counter.textContent = `0 / ${MAX_LEN}`;
+      form.reset(); cPesan.textContent = cKesan.textContent = `0 / ${MAX_LEN}`;
       success.hidden = false; $('#ok').focus();
     } catch (err) {
-      setStatus('Gagal mengirim. Periksa koneksi lalu coba lagi.', true);
+      console.error('Kirim gagal:', err);
+      setStatus(ERRORS[err.message] || 'Gagal mengirim. Periksa koneksi lalu coba lagi.', true);
     } finally {
       send.disabled = false; send.textContent = 'Kirim';
     }
   });
 
-  $('#ok').addEventListener('click', () => { success.hidden = true; msg.focus(); });
+  $('#ok').addEventListener('click', () => { success.hidden = true; pesan.focus(); });
 })();

@@ -15,7 +15,7 @@ ospro/
 1. Buka sheets.new, beri nama bebas (mis. "Pesan Kesan OSPRO 2026").
 2. Menu **Extensions → Apps Script**. Hapus isi default, tempel isi `backend/Code.gs`, simpan.
 3. **Project Settings (ikon gear) → Script Properties → Add property**:
-   `ADMIN_PASSWORD` = password panitia pilihanmu.
+   `ADMIN_PASSWORD` (atau `AdminOspro2026`, keduanya dikenali) = password panitia pilihanmu.
 4. **Deploy → New deployment → Type: Web app**
    - Execute as: **Me**
    - Who has access: **Anyone**
@@ -24,6 +24,11 @@ ospro/
 
 > Setiap kali `Code.gs` diubah, buat **New version** lewat Deploy → Manage deployments → Edit, agar perubahan aktif. URL tetap sama.
 > Sheet "Pesan" dibuat otomatis saat pesan pertama masuk. Ganti password cukup lewat Script Properties.
+
+### Kalau pesan terkirim tapi tidak masuk Sheet
+1. Di editor Apps Script buka menu **Executions**, kirim pesan lagi. Tidak ada entri `doPost` = URL di `js/config.js` bukan deployment ini, atau deployment belum di-*New version*.
+2. Ada entri tapi sheet kosong = script menulis ke spreadsheet lain. Isi `SPREADSHEET_ID` di `Code.gs` dengan ID spreadsheet tujuan, lalu deploy versi baru.
+3. Pesan error dari server tercatat di Executions (console.error).
 
 ## 2. Jalankan lokal
 ```

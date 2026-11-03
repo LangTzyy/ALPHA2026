@@ -16,14 +16,20 @@
     <div class="scene" aria-hidden="true"><div class="float"><div class="env open"><div class="env-back"></div><div class="env-paper"></div><div class="env-front"></div><div class="env-flap"></div><div class="env-seal">✉</div></div></div></div>
     <p class="eyebrow">HIMAPRO TI SAKTI</p>
     <h1>Pesan &amp; Kesan<br>OSPRO TI 2026</h1>
-    <p class="lead">Ceritakan pengalamanmu selama OSPRO: hal yang berkesan, yang kamu pelajari, atau pesan untuk panitia. Tidak perlu nama, tulisanmu sepenuhnya anonim.</p>
+    <p class="lead">Tulis pesan untuk panitia dan kesanmu selama OSPRO. Tidak perlu nama, tulisanmu sepenuhnya anonim.</p>
 
     <form id="form" class="paper" novalidate>
-      <label for="msg" class="sr">Pesan dan kesan</label>
-      <textarea id="msg" rows="8" maxlength="1000" placeholder="Tulis pesan dan kesanmu di sini…"></textarea>
-      <input type="text" name="website" id="hp" tabindex="-1" autocomplete="off" aria-hidden="true" class="hp">
+      <label for="pesan" class="field">Pesan</label>
+      <textarea id="pesan" rows="5" maxlength="1000" placeholder="Pesan untuk panitia atau OSPRO berikutnya…"></textarea>
+      <span id="count-pesan" class="muted count">0 / 1000</span>
+
+      <label for="kesan" class="field second">Kesan</label>
+      <textarea id="kesan" rows="5" maxlength="1000" placeholder="Kesan dan hal yang paling kamu ingat dari OSPRO…"></textarea>
+      <span id="count-kesan" class="muted count">0 / 1000</span>
+
+      <div class="hp-wrap" aria-hidden="true"><input type="text" name="hp_trap_x7" id="hp" tabindex="-1" autocomplete="off" class="hp"></div>
       <div class="row">
-        <span id="counter" class="muted">0 / 1000</span>
+        <span class="muted">Pesan dan kesan wajib diisi.</span>
         <button type="submit" id="send" class="btn">Kirim</button>
       </div>
       <p id="status" class="status" role="status" aria-live="polite"></p>
