@@ -1,52 +1,85 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="noindex">
-  <title>Pesan &amp; Kesan OSPRO TI 2026</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ctext y=%27.9em%27 font-size=%2790%27%3E%E2%9C%89%EF%B8%8F%3C/text%3E%3C/svg%3E">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
-  <main class="wrap narrow center">
-    <div class="scene" aria-hidden="true"><div class="float"><div class="env open"><div class="env-back"></div><div class="env-paper"></div><div class="env-front"></div><div class="env-flap"></div><div class="env-seal">✉</div></div></div></div>
-    <p class="eyebrow">HIMAPRO TI SAKTI</p>
-    <h1>Pesan &amp; Kesan<br>OSPRO TI 2026</h1>
-    <p class="lead">Tulis pesan untuk panitia dan kesanmu selama OSPRO. Tidak perlu nama, tulisanmu sepenuhnya anonim.</p>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Pesan &amp; Kesan OSPRO TI 2026</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ctext y=%27.9em%27 font-size=%2790%27%3E%E2%9C%89%EF%B8%8F%3C/text%3E%3C/svg%3E"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
 
-    <form id="form" class="paper" novalidate>
-      <label for="pesan" class="field">Pesan</label>
-      <textarea id="pesan" rows="5" maxlength="1000" placeholder="Pesan untuk panitia atau OSPRO berikutnya…"></textarea>
-      <span id="count-pesan" class="muted count">0 / 1000</span>
-
-      <label for="kesan" class="field second">Kesan</label>
-      <textarea id="kesan" rows="5" maxlength="1000" placeholder="Kesan dan hal yang paling kamu ingat dari OSPRO…"></textarea>
-      <span id="count-kesan" class="muted count">0 / 1000</span>
-
-      <div class="hp-wrap" aria-hidden="true"><input type="text" name="hp_trap_x7" id="hp" tabindex="-1" autocomplete="off" class="hp"></div>
-      <div class="row">
-        <span class="muted">Pesan dan kesan wajib diisi.</span>
-        <button type="submit" id="send" class="btn">Kirim</button>
+  <body>
+    <main class="wrap narrow center">
+      <div class="scene" aria-hidden="true">
+        <div class="float">
+          <div class="env open">
+            <div class="env-back"></div>
+            <div class="env-paper"></div>
+            <div class="env-front"></div>
+            <div class="env-flap"></div>
+            <div class="env-seal">✉</div>
+          </div>
+        </div>
       </div>
-      <p id="status" class="status" role="status" aria-live="polite"></p>
-    </form>
-  </main>
+      <p class="eyebrow">HIMAPRO TI SAKTI</p>
+      <h1>Pesan &amp; Kesan<br />OSPRO TI 2026</h1>
+      <p class="lead">
+        Tulis pesan untuk panitia dan kesanmu selama OSPRO. Tidak perlu nama,
+        tulisanmu sepenuhnya anonim.
+      </p>
 
-  <div id="success" class="overlay" hidden>
-    <div class="dialog center">
-      <svg class="check" viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="24"/><path d="M15 27l8 8 14-16"/></svg>
-      <h2>Terima kasih!</h2>
-      <p class="muted">Pesanmu sudah terkirim.</p>
-      <button type="button" id="ok" class="btn">Tutup</button>
+      <form id="form" class="paper" novalidate>
+        <label for="pesan" class="field">Pesan &amp; Kesan</label>
+        <textarea
+          id="pesan"
+          rows="8"
+          maxlength="1000"
+          placeholder="Tulis pesan untuk panitia dan kesanmu selama OSPRO…"
+        ></textarea>
+        <span id="count-pesan" class="muted count">0 / 1000</span>
+
+        <div class="hp-wrap" aria-hidden="true">
+          <input
+            type="text"
+            name="hp_trap_x7"
+            id="hp"
+            tabindex="-1"
+            autocomplete="off"
+            class="hp"
+          />
+        </div>
+        <div class="row">
+          <span class="muted">Wajib diisi.</span>
+          <button type="submit" id="send" class="btn">Kirim</button>
+        </div>
+        <p id="status" class="status" role="status" aria-live="polite"></p>
+      </form>
+    </main>
+
+    <div id="success" class="overlay" hidden>
+      <div class="dialog center">
+        <svg class="check" viewBox="0 0 52 52" aria-hidden="true">
+          <circle cx="26" cy="26" r="24" />
+          <path d="M15 27l8 8 14-16" />
+        </svg>
+        <h2>Terima kasih!</h2>
+        <p class="muted">Pesanmu sudah terkirim.</p>
+        <button type="button" id="ok" class="btn">Tutup</button>
+      </div>
     </div>
-  </div>
 
-  <script src="js/config.js"></script>
-  <script src="js/public.js"></script>
-  <script src="js/fx.js"></script>
-</body>
+    <script src="js/config.js"></script>
+    <script src="js/public.js"></script>
+    <script src="js/fx.js"></script>
+  </body>
 </html>

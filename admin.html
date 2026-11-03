@@ -1,64 +1,97 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="noindex, nofollow">
-  <title>Panitia · Pesan &amp; Kesan OSPRO TI 2026</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ctext y=%27.9em%27 font-size=%2790%27%3E%E2%9C%89%EF%B8%8F%3C/text%3E%3C/svg%3E">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
-  <main id="login" class="wrap narrow center">
-    <div class="scene small" aria-hidden="true"><div class="float"><div class="env closed"><div class="env-back"></div><div class="env-paper"></div><div class="env-front"></div><div class="env-flap"></div><div class="env-seal">✉</div></div></div></div>
-    <p class="eyebrow">Khusus panitia</p>
-    <h1>Masuk</h1>
-    <form id="login-form" class="paper">
-      <label for="pw" class="sr">Password</label>
-      <input id="pw" type="password" placeholder="Password panitia" autocomplete="current-password" required>
-      <button type="submit" class="btn" id="login-btn">Buka</button>
-      <p id="login-status" class="status" role="status" aria-live="polite"></p>
-    </form>
-  </main>
-
-  <main id="board" class="wrap" hidden>
-    <header class="bar">
-      <div>
-        <p class="eyebrow">Panitia OSPRO TI 2026</p>
-        <h1 class="h-sm">Pesan &amp; Kesan</h1>
-        <p class="total"><span id="count">0</span> pesan masuk</p>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Panitia · Pesan &amp; Kesan OSPRO TI 2026</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ctext y=%27.9em%27 font-size=%2790%27%3E%E2%9C%89%EF%B8%8F%3C/text%3E%3C/svg%3E"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <main id="login" class="wrap narrow center">
+      <div class="scene small" aria-hidden="true">
+        <div class="float">
+          <div class="env closed">
+            <div class="env-back"></div>
+            <div class="env-paper"></div>
+            <div class="env-front"></div>
+            <div class="env-flap"></div>
+            <div class="env-seal">✉</div>
+          </div>
+        </div>
       </div>
-      <div class="actions">
-        <button class="btn" id="random" type="button">Acak Kartu</button>
-        <button class="btn ghost" id="refresh" type="button">Refresh</button>
-        <button class="btn ghost" id="logout" type="button">Keluar</button>
-      </div>
-    </header>
-    <p id="state" class="state" role="status"></p>
-    <section id="grid" class="grid"></section>
-  </main>
+      <p class="eyebrow">Khusus panitia</p>
+      <h1>Masuk</h1>
+      <form id="login-form" class="paper">
+        <label for="pw" class="sr">Password</label>
+        <input
+          id="pw"
+          type="password"
+          placeholder="Password panitia"
+          autocomplete="current-password"
+          required
+        />
+        <button type="submit" class="btn" id="login-btn">Buka</button>
+        <p
+          id="login-status"
+          class="status"
+          role="status"
+          aria-live="polite"
+        ></p>
+      </form>
+    </main>
 
-  <div id="modal" class="overlay" hidden>
-    <article class="dialog letter" role="dialog" aria-modal="true" aria-labelledby="m-no">
-      <header class="letter-head">
-        <span id="m-no" class="no"></span>
-        <button id="m-close" class="x" type="button" aria-label="Tutup">×</button>
+    <main id="board" class="wrap" hidden>
+      <header class="bar">
+        <div>
+          <p class="eyebrow">Panitia OSPRO TI 2026</p>
+          <h1 class="h-sm">Pesan &amp; Kesan Alpha 2026</h1>
+          <p class="total"><span id="count">0</span> pesan masuk</p>
+        </div>
+        <div class="actions">
+          <button class="btn" id="random" type="button">Acak Kartu</button>
+          <button class="btn ghost" id="logout" type="button">Keluar</button>
+        </div>
       </header>
-      <div class="letter-body">
-        <h3 class="sec">Pesan</h3>
-        <p id="m-pesan" class="letter-text"></p>
-        <h3 class="sec">Kesan</h3>
-        <p id="m-kesan" class="letter-text"></p>
-      </div>
-      <footer id="m-date" class="muted"></footer>
-    </article>
-  </div>
+      <p id="state" class="state" role="status"></p>
+      <section id="grid" class="grid"></section>
+    </main>
 
-  <script src="js/config.js"></script>
-  <script src="js/admin.js"></script>
-  <script src="js/fx.js"></script>
-</body>
+    <div id="modal" class="overlay" hidden>
+      <article
+        class="dialog letter"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="m-no"
+      >
+        <header class="letter-head">
+          <span id="m-no" class="no"></span>
+          <button id="m-close" class="x" type="button" aria-label="Tutup">
+            ×
+          </button>
+        </header>
+        <div class="letter-body">
+          <h3 class="sec">Pesan</h3>
+          <p id="m-pesan" class="letter-text"></p>
+          <h3 class="sec">Kesan</h3>
+          <p id="m-kesan" class="letter-text"></p>
+        </div>
+        <footer id="m-date" class="muted"></footer>
+      </article>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/admin.js"></script>
+    <script src="js/fx.js"></script>
+  </body>
 </html>
