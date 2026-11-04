@@ -17,6 +17,7 @@
     />
     <link rel="stylesheet" href="css/style.css" />
   </head>
+
   <body>
     <main id="login" class="wrap narrow center">
       <div class="scene small" aria-hidden="true">
@@ -88,6 +89,43 @@
         </div>
         <footer id="m-date" class="muted"></footer>
       </article>
+    </div>
+
+    <div id="stage" class="stage" hidden>
+      <div class="rays" aria-hidden="true"></div>
+      <span class="ring" aria-hidden="true"></span>
+      <span class="ring r2" aria-hidden="true"></span>
+      <div
+        class="stage-inner"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="s-title"
+      >
+        <p id="s-title" class="s-title">Kartu terpilih</p>
+        <div class="scene" aria-hidden="true">
+          <div class="float">
+            <div class="env">
+              <div class="env-back"></div>
+              <div class="env-paper"></div>
+              <div class="env-front"></div>
+              <div class="env-flap"></div>
+              <div class="env-seal">✉</div>
+            </div>
+          </div>
+        </div>
+        <p id="s-no" class="s-no"></p>
+        <div class="s-actions">
+          <button id="s-open" class="btn" type="button">Buka</button>
+          <button id="s-cancel" class="btn ghost" type="button">Batal</button>
+        </div>
+        <p id="s-status" class="status" role="status" aria-live="polite"></p>
+      </div>
+      <div id="sparks" class="sparks" aria-hidden="true"></div>
+    </div>
+
+    <div id="shuffle" class="shuffle" hidden aria-hidden="true">
+      <p id="sh-label" class="sh-label">Mengacak kartu…</p>
+      <div id="sh-deck" class="sh-deck"></div>
     </div>
 
     <script src="js/config.js"></script>

@@ -1,5 +1,5 @@
 (() => {
-  const { API_URL, POLL_MS, ALLOW_REREAD } = window.APP_CONFIG;
+  const { API_URL, POLL_MS } = window.APP_CONFIG;
   const $ = (s) => document.querySelector(s);
   const loginEl = $("#login"),
     board = $("#board"),
@@ -14,6 +14,16 @@
     current = [],
     randomBusy = false;
   const randomBtn = $("#random");
+  const calm = matchMedia("(prefers-reduced-motion:reduce)").matches;
+  const stage = $("#stage"),
+    sOpen = $("#s-open"),
+    sCancel = $("#s-cancel"),
+    sStatus = $("#s-status"),
+    sparks = $("#sparks"),
+    stageEnv = stage.querySelector(".env");
+  let stageItem = null,
+    stageActive = false,
+    stageBusy = false;
 
   const signature = (items) =>
     items.map((i) => i.id + (i.opened ? "1" : "0")).join(",");
@@ -29,6 +39,8 @@
 
   function markDone(card) {
     card.classList.add("done");
+    card.disabled = true;
+    card.setAttribute("aria-label", "Pesan sudah dibuka");
     card.querySelector(".muted").textContent = "Sudah dibuka";
   }
 
@@ -48,7 +60,7 @@
         card.type = "button";
         card.className = "card";
         card.dataset.id = it.id;
-        card.setAttribute("aria-label", `Buka pesan nomor ${it.n}`);
+        card.setAttribute("aria-label", `Pilih pesan nomor ${it.n}`);
         const flap = document.createElement("span");
         flap.className = "flap";
         const seal = document.createElement("span");
@@ -59,17 +71,20 @@
         no.textContent = `#${it.n}`;
         const hint = document.createElement("span");
         hint.className = "muted";
-        hint.textContent = "Klik untuk membuka";
+        hint.textContent = "Klik untuk memilih";
         card.append(flap, seal, no, hint);
         if (it.opened) markDone(card);
-        card.addEventListener("click", () => openLetter(it, card));
+        card.addEventListener("click", () => {
+          if (it.opened || randomBusy || stageActive) return;
+          openStage(it);
+        });
         grid.append(card);
       });
     updateRandomBtn();
   }
 
   async function load() {
-    if (busy) return;
+    if (busy || stageActive || randomBusy) return;
     busy = true;
     if (!grid.children.length) stateEl.textContent = "Memuat pesan…";
     try {
@@ -92,97 +107,278 @@
     }
   }
 
-  // ---- Buka surat: klaim di server dulu, baru tampilkan ----
-  async function openLetter(it, card, fromRandom) {
-    if (!it.opened) {
-      card.disabled = true;
-      stateEl.textContent = "";
-      let d;
-      try {
-        d = await api({ action: "open", password: pw, id: it.id });
-      } catch (e) {
-        card.disabled = false;
-        stateEl.textContent =
-          "Gagal membuka pesan. Periksa koneksi lalu coba lagi.";
-        return;
-      }
-      card.disabled = false;
-      if (!d.ok && d.error === "unauthorized") return logout();
-      if (!d.ok && d.error !== "already_opened") {
-        stateEl.textContent = "Gagal membuka pesan. Coba lagi.";
-        return;
-      }
-      it.opened = true;
-      markDone(card);
-      sig = signature(current);
-      updateRandomBtn();
-      if (!d.ok && fromRandom) return "taken"; // sudah dibuka perangkat lain: acak ulang
-      if (!d.ok && !ALLOW_REREAD) {
-        stateEl.textContent = `Pesan #${it.n} sudah dibuka di perangkat lain.`;
-        return;
-      }
-    } else if (!ALLOW_REREAD) {
-      stateEl.textContent = `Pesan #${it.n} sudah pernah dibuka.`;
-      return;
-    }
-    showModal(it, card);
-    return "shown";
-  }
-
-  // ---- Acak: pilih satu kartu yang BELUM dibuka; yang sudah dibuka tidak ikut diacak ----
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   const findCard = (id) => [...grid.children].find((c) => c.dataset.id === id);
   const unopened = () => current.filter((i) => !i.opened);
 
   function updateRandomBtn() {
-    randomBtn.disabled = randomBusy || unopened().length === 0;
+    randomBtn.disabled = randomBusy || stageActive || unopened().length === 0;
+  }
+
+  function markOpened(id) {
+    const it = current.find((i) => i.id === id);
+    if (it) it.opened = true;
+    const c = findCard(id);
+    if (c) markDone(c);
+    sig = signature(current);
+    updateRandomBtn();
+  }
+
+  // ---- Efek percikan emas ----
+  function burst(n, power) {
+    if (calm) return;
+    sparks.replaceChildren();
+    const colors = ["#f2b84b", "#ffdc8a", "#fff6d6", "#ffffff"];
+    for (let i = 0; i < n; i++) {
+      const a = Math.random() * Math.PI * 2,
+        d = (90 + Math.random() * 150) * power;
+      const sp = document.createElement("span");
+      sp.className = "spark";
+      sp.style.setProperty("--dx", Math.cos(a) * d + "px");
+      sp.style.setProperty("--dy", Math.sin(a) * d + "px");
+      sp.style.setProperty("--sz", 4 + Math.random() * 7 + "px");
+      sp.style.setProperty("--t", 0.8 + Math.random() * 0.7 + "s");
+      sp.style.setProperty("--c", colors[i % colors.length]);
+      sparks.append(sp);
+    }
+  }
+
+  // ---- Panggung: kartu terpilih tetap TERTUTUP sampai tombol "Buka" ditekan ----
+  function openStage(it) {
+    stageItem = it;
+    stageActive = true;
+    stageBusy = false;
+    const card = findCard(it.id);
+    if (card) card.classList.add("chosen");
+    $("#s-no").textContent = `Pesan #${it.n}`;
+    sStatus.textContent = "";
+    sStatus.classList.remove("err");
+    stageEnv.classList.remove("open");
+    stage.classList.remove("opening");
+    sOpen.disabled = sCancel.disabled = false;
+    sOpen.textContent = "Buka";
+    updateRandomBtn();
+    stage.hidden = false;
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => {
+        stage.classList.add("show");
+        burst(26, 1);
+      }),
+    );
+    sOpen.focus();
+  }
+
+  function closeStage() {
+    const card = stageItem && findCard(stageItem.id);
+    if (card) card.classList.remove("chosen");
+    stageActive = false;
+    stageBusy = false;
+    stageItem = null;
+    stage.classList.remove("show");
+    setTimeout(() => {
+      if (stageActive) return; // dibuka lagi saat menunggu
+      stage.hidden = true;
+      stageEnv.classList.remove("open");
+      stage.classList.remove("opening");
+    }, 380);
+    updateRandomBtn();
+  }
+
+  function stageFail(msg) {
+    stageBusy = false;
+    sOpen.disabled = sCancel.disabled = false;
+    sOpen.textContent = "Buka";
+    sStatus.textContent = msg;
+    sStatus.classList.add("err");
+    sOpen.focus();
+  }
+
+  // Klaim di server dulu, baru isi pesan ditampilkan. Sekali dibuka = tidak bisa dibuka lagi.
+  async function confirmOpen() {
+    if (!stageItem || stageBusy) return;
+    const it = stageItem;
+    stageBusy = true;
+    sOpen.disabled = sCancel.disabled = true;
+    sOpen.textContent = "Membuka…";
+    sStatus.textContent = "";
+    sStatus.classList.remove("err");
+    let d;
+    try {
+      d = await api({ action: "open", password: pw, id: it.id });
+    } catch (e) {
+      return stageFail("Gagal membuka pesan. Periksa koneksi lalu coba lagi.");
+    }
+    if (!d.ok && d.error === "unauthorized") {
+      closeStage();
+      return logout();
+    }
+    if (!d.ok && d.error !== "already_opened")
+      return stageFail("Gagal membuka pesan. Coba lagi.");
+    markOpened(it.id);
+    if (!d.ok) {
+      // sudah dibuka di perangkat lain
+      closeStage();
+      stateEl.textContent = `Pesan #${it.n} sudah dibuka di perangkat lain.`;
+      return;
+    }
+    stage.classList.add("opening");
+    stageEnv.classList.add("open");
+    burst(40, 1.5);
+    await sleep(calm ? 0 : 1250);
+    showModal(it, findCard(it.id), true);
+    closeStage();
+  }
+  sOpen.addEventListener("click", confirmOpen);
+  sCancel.addEventListener("click", () => {
+    if (!stageBusy) closeStage();
+  });
+
+  // ---- Acak: shuffle kartu (riffle -> kipas -> sorotan melambat -> kartu terpilih) ----
+  async function shuffleShow() {
+    const wrap = $("#shuffle"),
+      deck = $("#sh-deck"),
+      label = $("#sh-label");
+    const N = 12,
+      sx = innerWidth < 520 ? 62 : 95;
+    const rest = (i) => `translate(0px,${-i * 1.5}px) rotate(0deg)`;
+    const mv = (el, to, dur, delay = 0, ease = "cubic-bezier(.3,.7,.2,1)") => {
+      const from = getComputedStyle(el).transform;
+      const a = el.animate([{ transform: from }, { transform: to }], {
+        duration: dur,
+        delay,
+        easing: ease,
+        fill: "both",
+      });
+      return a.finished.then(() => {
+        el.style.transform = to;
+        a.cancel();
+      });
+    };
+
+    deck.replaceChildren();
+    let cards = Array.from({ length: N }, (_, i) => {
+      const c = document.createElement("div");
+      c.className = "sh-card";
+      c.innerHTML = "<span>✉</span>";
+      c.style.zIndex = i;
+      c.style.transform = rest(i);
+      deck.append(c);
+      return c;
+    });
+    label.textContent = "Mengacak kartu…";
+    wrap.hidden = false;
+    try {
+      await sleep(30);
+      wrap.classList.add("show");
+      await sleep(450);
+
+      // 1) Riffle shuffle: tumpukan dibelah, lalu kartu saling menyelip
+      for (let r = 0; r < 4; r++) {
+        const h = N / 2,
+          L = cards.slice(0, h),
+          R = cards.slice(h);
+        await Promise.all([
+          ...L.map((c, i) =>
+            mv(c, `translate(${-sx}px,${-i * 1.5}px) rotate(-7deg)`, 240),
+          ),
+          ...R.map((c, i) =>
+            mv(c, `translate(${sx}px,${-i * 1.5}px) rotate(7deg)`, 240),
+          ),
+        ]);
+        const order = [];
+        for (let i = 0; i < h; i++)
+          r % 2 ? order.push(L[i], R[i]) : order.push(R[i], L[i]);
+        order.forEach((c, i) => (c.style.zIndex = i));
+        await Promise.all(order.map((c, i) => mv(c, rest(i), 170, i * 40)));
+        cards = order;
+        await sleep(60);
+      }
+
+      // 2) Kartu melebar seperti kipas
+      label.textContent = "Memilih kartu…";
+      const step = Math.min(40, (innerWidth - 170) / (N - 1)),
+        mid = (N - 1) / 2;
+      const pos = (i, up = 0) =>
+        `translate(${(i - mid) * step}px,${Math.abs(i - mid) * 3 - up}px) rotate(${(i - mid) * 6}deg)`;
+      await Promise.all(
+        cards.map((c, i) =>
+          mv(c, pos(i), 520, i * 25, "cubic-bezier(.2,.9,.3,1)"),
+        ),
+      );
+      await sleep(250);
+
+      // 3) Sorotan berpindah-pindah, makin lama makin lambat, berhenti di pemenang
+      const winIdx = Math.floor(Math.random() * N),
+        steps = 14,
+        seq = [];
+      let prev = -1;
+      for (let k = 0; k < steps - 1; k++) {
+        let j;
+        do j = Math.floor(Math.random() * N);
+        while (j === prev || (k === steps - 2 && j === winIdx));
+        seq.push(j);
+        prev = j;
+      }
+      seq.push(winIdx);
+      for (let k = 0; k < seq.length; k++) {
+        const i = seq[k],
+          c = cards[i];
+        c.classList.add("hot");
+        c.style.zIndex = 50;
+        mv(c, pos(i, 34), 120);
+        if (k === seq.length - 1) break;
+        await sleep(70 + Math.pow(k / (seq.length - 1), 2) * 380);
+        c.classList.remove("hot");
+        c.style.zIndex = i;
+        mv(c, pos(i), 120);
+      }
+
+      // 4) Kartu terpilih maju ke tengah, sisanya meredup
+      const w = cards[winIdx];
+      label.textContent = "Terpilih!";
+      cards.forEach((c, i) => {
+        if (i === winIdx) return;
+        c.style.transition = "opacity .4s";
+        c.style.opacity = ".2";
+      });
+      w.classList.add("win");
+      await mv(
+        w,
+        "translate(0px,-40px) rotate(0deg) scale(1.25)",
+        500,
+        0,
+        "cubic-bezier(.2,1.3,.4,1)",
+      );
+      await sleep(800);
+    } finally {
+      wrap.classList.remove("show");
+      await sleep(300);
+      wrap.hidden = true;
+      deck.replaceChildren();
+    }
   }
 
   async function pickRandom() {
-    if (randomBusy || !modal.hidden) return;
-    if (!unopened().length) {
+    if (randomBusy || stageActive || !modal.hidden) return;
+    const pool = unopened();
+    if (!pool.length) {
       stateEl.textContent = "Semua pesan sudah dibuka.";
       return;
     }
     randomBusy = true;
     updateRandomBtn();
     stateEl.textContent = "";
+    const pick = pool[Math.floor(Math.random() * pool.length)];
     try {
-      for (let tries = 0; tries < 5; tries++) {
-        const pool = unopened();
-        if (!pool.length) {
-          stateEl.textContent = "Semua pesan sudah dibuka.";
-          break;
-        }
-        const pick = pool[Math.floor(Math.random() * pool.length)];
-        const calm = matchMedia("(prefers-reduced-motion:reduce)").matches;
-
-        // Efek "mengundi": sorot beberapa kartu bergantian, lalu berhenti di kartu terpilih
-        const cards = [...grid.querySelectorAll(".card:not(.done)")];
-        if (!calm && cards.length > 1) {
-          for (let i = 0; i < 8; i++) {
-            const c = cards[Math.floor(Math.random() * cards.length)];
-            c.classList.add("pick");
-            await sleep(90);
-            c.classList.remove("pick");
-          }
-        }
-        let card = findCard(pick.id);
-        if (!card) break; // daftar berubah saat refresh
-        card.scrollIntoView({
-          behavior: calm ? "auto" : "smooth",
-          block: "center",
-        });
-        card.classList.add("pick");
-        await sleep(calm ? 0 : 500);
-        card.classList.remove("pick");
-
-        card = findCard(pick.id);
-        const item = current.find((i) => i.id === pick.id);
-        if (!card || !item || item.opened) continue; // sudah terpilih: acak lagi
-        const r = await openLetter(item, card, true);
-        if (r !== "taken") break;
+      if (!calm) await shuffleShow();
+      const item = current.find((i) => i.id === pick.id);
+      if (!item || item.opened) {
+        stateEl.textContent = "Daftar berubah. Coba acak lagi.";
+        return;
       }
+      const card = findCard(item.id);
+      if (card) card.scrollIntoView({ block: "center", behavior: "auto" });
+      openStage(item);
     } finally {
       randomBusy = false;
       updateRandomBtn();
@@ -191,7 +387,7 @@
   randomBtn.addEventListener("click", pickRandom);
 
   // ---- Modal: zoom dari posisi card ----
-  function showModal(it, card) {
+  function showModal(it, card, center) {
     lastCard = card;
     $("#m-no").textContent = `Pesan #${it.n}`;
     $("#m-pesan").textContent = it.pesan || "—";
@@ -205,8 +401,11 @@
       dateStyle: "long",
       timeStyle: "short",
     });
-    const r = card.getBoundingClientRect();
-    dialog.style.transformOrigin = `${r.left + r.width / 2}px ${r.top + r.height / 2}px`;
+    if (center || !card) dialog.style.transformOrigin = "50% 50%";
+    else {
+      const r = card.getBoundingClientRect();
+      dialog.style.transformOrigin = `${r.left + r.width / 2}px ${r.top + r.height / 2}px`;
+    }
     modal.hidden = false;
     requestAnimationFrame(() => modal.classList.add("open"));
     $("#m-close").focus();
@@ -226,7 +425,10 @@
     if (e.target === modal) closeLetter();
   });
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeLetter();
+    if (e.key !== "Escape") return;
+    if (stageActive) {
+      if (!stageBusy) closeStage();
+    } else closeLetter();
   });
 
   // ---- Auth ----
@@ -277,7 +479,6 @@
     }
   });
   $("#logout").addEventListener("click", logout);
-  $("#refresh").addEventListener("click", load);
 
   // Auto-refresh hanya saat tab terlihat
   setInterval(() => {
