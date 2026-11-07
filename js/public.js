@@ -55,7 +55,10 @@
         }), // 'message' = format satu kolom, diterima backend tanpa perubahan
       });
       const data = await res.json();
-      if (!data.ok) throw new Error(data.error || "unknown");
+      if (!data.ok) {
+        console.error("Detail server:", data.detail);
+        throw new Error(data.error || "unknown");
+      }
       localStorage.setItem("ospro_last", String(Date.now()));
       form.reset();
       cPesan.textContent = `0 / ${MAX_LEN}`;
